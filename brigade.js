@@ -80,7 +80,7 @@ events.on('gcr_image_push', async (brigadeEvent, project) => {
   console.log('image action: ', imageAction);
   console.log('image: ', image);
 
-  const infraJob = new Job('update-infra-config-pr');
+  const infraJob = new Job('update-infra-config-pr-prod');
 
   infraJob.storage.enabled = false;
   infraJob.image = 'gcr.io/hightowerlabs/hub';
@@ -97,7 +97,7 @@ events.on('gcr_image_push', async (brigadeEvent, project) => {
   const projectURL = `https://${projectName}`;
   const imageURL = `https://${image}`;
   const kashtiURL = `${project.secrets.KASHTI_URL}/#!/build/${buildID}`;
-  const slackJob = new Job('slack-notify-update-infra');
+  const slackJob = new Job('slack-notify-update-infra-prod');
 
   slackJob.storage.enabled = false;
   slackJob.image = 'technosophos/slack-notify';
@@ -127,7 +127,7 @@ events.on('pull_request', (brigadeEvent, project) => {
   const projectName = project.name;
   const projectURL = `https://${projectName}`;
   const prTitle = payload.pull_request.title;
-  const prURL = payload.pull_request.url;
+  const prURL = payload.pull_request.html_url;
   const kashtiURL = `${project.secrets.KASHTI_URL}/#!/build/${buildID}`;
   const slackJob = new Job('slack-notify-pr-prod');
 
@@ -188,7 +188,7 @@ events.on('push', (brigadeEvent, project) => {
 
   const pipeline = new Group();
 
-  // pipeline.add(deployJob);
+  pipeline.add(deployJob);
   pipeline.add(slackJob);
   pipeline.runEach();
 });
