@@ -68,7 +68,7 @@ Build ID:
 EOF
 `;
 
-events.on('gcr_image_push', (brigadeEvent, project) => {
+events.on('gcr_image_push', async (brigadeEvent, project) => {
   const buildID = brigadeEvent.buildID;
 
   console.log('[EVENT] "gcr_image_push" - build ID: ', buildID);
@@ -129,9 +129,8 @@ events.on('pull_request', (brigadeEvent, project) => {
 
   const projectName = project.name;
   const projectURL = `https://${projectName}`;
-  const commitSHA = brigadeEvent.revision.commit;
-  const shortCommitSHA = commitSHA.substr(0, 7);
-  const commitURL = `https://${projectName}/commit/${commitSHA}`;
+  const prTitle = payload.pull_request.title;
+  const prURL = payload.pull_request.url;
   const kashtiURL = `${project.secrets.KASHTI_URL}/#!/build/${buildID}`;
   const slackJob = new Job('slack-notify-pr-prod');
 
@@ -140,8 +139,8 @@ events.on('pull_request', (brigadeEvent, project) => {
   slackJob.tasks = ['/slack-notify'];
   slackJob.env = {
     SLACK_WEBHOOK: project.secrets.SLACK_WEBHOOK,
-    SLACK_TITLE: 'PR Waiting for Approval',
-    SLACK_MESSAGE: `Project <${projectURL}|${projectName}>\nCommit <${commitURL}|${shortCommitSHA}>\nBuild <${kashtiURL}|${buildID}>`,
+    SLACK_TITLE: 'PR Awaiting Approval',
+    SLACK_MESSAGE: `Project <${projectURL}|${projectName}>\nPR <${prURL}|${prTitle}>\nBuild <${kashtiURL}|${buildID}>`,
     SLACK_COLOR: '#ffcb6b'
   };
 
@@ -157,8 +156,14 @@ events.on('push', (brigadeEvent, project) => {
   console.log('[EVENT] "push" - build ID: ', buildID);
 
   const payload = JSON.parse(brigadeEvent.payload);
+  const branch = payload.ref.substring(11);
 
-  console.log('payload: ', payload);
+  console.log('branch: ', branch);
+
+  if (branch !== 'master') {
+    // ONLY deploy when pushed to master
+    return;
+  }
 
   const deployJob = new Job('deploy-to-prod');
 
@@ -179,7 +184,7 @@ events.on('push', (brigadeEvent, project) => {
   slackJob.tasks = ['/slack-notify'];
   slackJob.env = {
     SLACK_WEBHOOK: project.secrets.SLACK_WEBHOOK,
-    SLACK_TITLE: 'Deploy to Production',
+    SLACK_TITLE: 'Deploy Production',
     SLACK_MESSAGE: `Project <${projectURL}|${projectName}>\nCommit <${commitURL}|${shortCommitSHA}>\nBuild <${kashtiURL}|${buildID}>`,
     SLACK_COLOR: '#c3e88d'
   };
