@@ -124,9 +124,6 @@ events.on('pull_request', (brigadeEvent, project) => {
   console.log('[EVENT] "pull_request" - build ID: ', buildID);
 
   const payload = JSON.parse(brigadeEvent.payload);
-
-  console.log('payload: ', payload);
-
   const projectName = project.name;
   const projectURL = `https://${projectName}`;
   const prTitle = payload.pull_request.title;
