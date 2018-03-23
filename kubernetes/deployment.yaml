@@ -12,7 +12,7 @@ spec:
         version: v1
     spec:
       containers:
-      - image: gcr.io/k8s-cluster-cn/crowdynews/gitops-hello-world-brigade
+      - image: gcr.io/k8s-cluster-cn/crowdynews/gitops-hello-world-brigade:1.0.0
         name: gitops-hello-world-brigade
         ports:
         - containerPort: 8888
