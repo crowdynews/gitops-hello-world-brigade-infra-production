@@ -96,7 +96,6 @@ events.on('gcr_image_push', (brigadeEvent, project) => {
   const projectName = project.name;
   const projectURL = `https://${projectName}`;
   const imageURL = `https://${image}`;
-  const buildID = brigadeEvent.buildID;
   const kashtiURL = `${project.secrets.KASHTI_URL}/#!/build/${buildID}`;
   const slackJob = new Job('slack-notify-update-infra');
 
@@ -120,14 +119,15 @@ events.on('gcr_image_push', (brigadeEvent, project) => {
 });
 
 events.on('pull_request', (brigadeEvent, project) => {
-  console.log('[EVENT] "pull_request" - build ID: ', brigadeEvent.buildID);
+  const buildID = brigadeEvent.buildID;
+
+  console.log('[EVENT] "pull_request" - build ID: ', buildID);
 
   const projectName = project.name;
   const projectURL = `https://${projectName}`;
   const commitSHA = brigadeEvent.revision.commit;
   const shortCommitSHA = commitSHA.substr(0, 7);
   const commitURL = `https://${projectName}/commit/${commitSHA}`;
-  const buildID = brigadeEvent.buildID;
   const kashtiURL = `${project.secrets.KASHTI_URL}/#!/build/${buildID}`;
   const slackJob = new Job('slack-notify-pr-prod');
 
@@ -148,7 +148,9 @@ events.on('pull_request', (brigadeEvent, project) => {
 });
 
 events.on('push', (brigadeEvent, project) => {
-  console.log('[EVENT] "push" - build ID: ', brigadeEvent.buildID);
+  const buildID = brigadeEvent.buildID;
+
+  console.log('[EVENT] "push" - build ID: ', buildID);
 
   const deployJob = new Job('deploy-to-prod');
 
@@ -161,7 +163,6 @@ events.on('push', (brigadeEvent, project) => {
   const commitSHA = brigadeEvent.revision.commit;
   const shortCommitSHA = commitSHA.substr(0, 7);
   const commitURL = `https://${projectName}/commit/${commitSHA}`;
-  const buildID = brigadeEvent.buildID;
   const kashtiURL = `${project.secrets.KASHTI_URL}/#!/build/${buildID}`;
   const slackJob = new Job('slack-notify-deploy-prod');
 
