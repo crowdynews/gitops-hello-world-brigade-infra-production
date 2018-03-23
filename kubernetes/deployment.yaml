@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: gitops-hello-world-brigade
+  namespace: production
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gitops-hello-world-brigade
+        version: v1
+    spec:
+      containers:
+      - image: gcr.io/k8s-cluster-cn/crowdynews/gitops-hello-world-brigade
+        name: gitops-hello-world-brigade
+        ports:
+        - containerPort: 8888

@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: gitops-hello-world-brigade
+  labels:
+    app: gitops-hello-world-brigade
+  namespace: production
+spec:
+  ports:
+  - name: http
+    port: 8888
+    targetPort: 8888
+    protocol: TCP
+  selector:
+    app: gitops-hello-world-brigade
+  type: ClusterIP
