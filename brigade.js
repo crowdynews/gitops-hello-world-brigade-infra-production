@@ -123,6 +123,10 @@ events.on('pull_request', (brigadeEvent, project) => {
 
   console.log('[EVENT] "pull_request" - build ID: ', buildID);
 
+  const payload = JSON.parse(brigadeEvent.payload);
+
+  console.log('payload: ', payload);
+
   const projectName = project.name;
   const projectURL = `https://${projectName}`;
   const commitSHA = brigadeEvent.revision.commit;
@@ -151,6 +155,10 @@ events.on('push', (brigadeEvent, project) => {
   const buildID = brigadeEvent.buildID;
 
   console.log('[EVENT] "push" - build ID: ', buildID);
+
+  const payload = JSON.parse(brigadeEvent.payload);
+
+  console.log('payload: ', payload);
 
   const deployJob = new Job('deploy-to-prod');
 
@@ -184,5 +192,5 @@ events.on('push', (brigadeEvent, project) => {
 });
 
 events.on('error', (brigadeEvent, project) => {
-  console.log('[EVENT] "error" reason: ', brigadeEvent.reason);
+  console.log('[EVENT] "error" brigade event: ', brigadeEvent);
 });
