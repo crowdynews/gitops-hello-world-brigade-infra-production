@@ -90,7 +90,7 @@ events.on('gcr_image_push', (brigadeEvent, project) => {
     'cd src',
     _commitImage(image, buildID),
     _pushCommit(project.repo.cloneURL, buildID),
-    _pullRequest(imagae, buildID)
+    _pullRequest(image, buildID)
   ];
 
   const projectName = project.name;
@@ -184,5 +184,5 @@ events.on('push', (brigadeEvent, project) => {
 });
 
 events.on('error', (brigadeEvent, project) => {
-  console.log('[EVENT] "error" - brigade event: ', brigadeEvent);
+  console.log('[EVENT] "error" reason: ', brigadeEvent.reason);
 });
